@@ -26,10 +26,14 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     movies: () => client.movie.findMany(),
-    movie: (_, { id }) => client.movie.findUnique({ where: { id } }),
+    movie: (_: any, { id }: { id: number }) =>
+      client.movie.findUnique({ where: { id } }),
   },
   Mutation: {
-    createMovie: (_, { title, year, genre }) =>
+    createMovie: (
+      _: any,
+      { title, year, genre }: { title: string; year: number; genre?: string }
+    ) =>
       client.movie.create({
         data: {
           title,
@@ -37,8 +41,9 @@ const resolvers = {
           genre,
         },
       }),
-    deleteMovie: (_, { id }) => client.movie.delete({ where: { id } }),
-    updateMovie: (_, { id, year }) =>
+    deleteMovie: (_: any, { id }: { id: number }) =>
+      client.movie.delete({ where: { id } }),
+    updateMovie: (_: any, { id, year }: { id: number; year: number }) =>
       client.movie.update({ where: { id }, data: { year } }),
   },
 };
