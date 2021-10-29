@@ -21,6 +21,7 @@
     "@babel/core": "^7.15.8",
     "@babel/node": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
+    "@prisma/client": "^3.3.0",
     "apollo-server": "^2.19.1",
     "graphql": "^15.4.0"
   },
