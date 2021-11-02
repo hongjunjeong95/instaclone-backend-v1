@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import client from "../../client";
+import { Resolver } from "../../types";
 import { protectedResolver } from "../users.utils";
 
-const resolverFn = async (
+const resolverFn: Resolver = async (
   _,
   { firstName, lastName, username, email, password: newPassword, bio },
-  { loggedInUser, protectResolver }
+  { loggedInUser, client }
 ) => {
   let uglyPassword = null;
   if (newPassword) {
@@ -13,7 +13,7 @@ const resolverFn = async (
   }
   const updatedUser = await client.user.update({
     where: {
-      id: loggedInUser.id,
+      id: loggedInUser?.id,
     },
     data: {
       firstName,
