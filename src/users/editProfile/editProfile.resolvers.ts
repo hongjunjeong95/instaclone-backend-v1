@@ -1,17 +1,24 @@
-import bcrypt from "bcrypt";
-import { createWriteStream } from "fs";
-import { Resolver } from "../../types";
-import { protectedResolver } from "../users.utils";
+import bcrypt from 'bcrypt';
+import { createWriteStream } from 'fs';
+import { Resolver } from '../../types';
+import { protectedResolver } from '../users.utils';
 
 const resolverFn: Resolver = async (
   _,
   { firstName, lastName, username, email, password: newPassword, bio, avatar },
   { loggedInUser, client }
 ) => {
-  const { filename, createReadStream } = await avatar;
-  const readStream = createReadStream();
-  const writeStream = createWriteStream(process.cwd() + "/uploads/" + filename);
-  readStream.pipe(writeStream);
+  let avatarUrl = null;
+  if (avatar) {
+    const { filename, createReadStream } = await avatar;
+    const newFilename = `${loggedInUser?.id}-${Date.now()}-${filename}`;
+    const readStream = createReadStream();
+    const writeStream = createWriteStream(
+      process.cwd() + '/uploads/' + newFilename
+    );
+    readStream.pipe(writeStream);
+    avatarUrl = `http://localhost:4000/static/${newFilename}`;
+  }
 
   let uglyPassword = null;
   if (newPassword) {
@@ -28,6 +35,7 @@ const resolverFn: Resolver = async (
       email,
       bio,
       ...(uglyPassword && { password: uglyPassword }),
+      ...(avatarUrl && { avatar: avatarUrl }),
     },
   });
   if (updatedUser.id) {
@@ -37,7 +45,7 @@ const resolverFn: Resolver = async (
   } else {
     return {
       ok: false,
-      error: "Could not update profile.",
+      error: 'Could not update profile.',
     };
   }
 };

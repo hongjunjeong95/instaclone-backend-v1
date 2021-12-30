@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import { Resolvers } from "../../types";
+import bcrypt from 'bcrypt';
+import { Resolvers } from '../../types';
 
 const resolvers: Resolvers = {
   Mutation: {
@@ -22,10 +22,10 @@ const resolvers: Resolvers = {
           },
         });
         if (existingUser) {
-          throw new Error("This username/email is already taken.");
+          throw new Error('This username/email is already taken.');
         }
         const uglyPassword = await bcrypt.hash(password, 10);
-        return client.user.create({
+        client.user.create({
           data: {
             username,
             email,
@@ -34,6 +34,9 @@ const resolvers: Resolvers = {
             password: uglyPassword,
           },
         });
+        return {
+          ok: true,
+        };
       } catch (e) {
         return e;
       }
